@@ -12,7 +12,7 @@ struct std::numeric_limits<multipleint::multiple_int<BitWidth, BackingStorage>>
 private:
   using value_type = multipleint::multiple_int<BitWidth, BackingStorage>;
 
-  using traits = value_type::traits;
+  using traits = typename value_type::traits;
 
 public:
   static constexpr bool is_specialized = true;
