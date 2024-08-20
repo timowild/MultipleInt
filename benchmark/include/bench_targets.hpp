@@ -11,9 +11,9 @@ namespace bench
 template<class Exec, class InputIterator1, class InputIterator2, class OutputIterator>
 constexpr void xpy(Exec&& exec, InputIterator1 x_b, InputIterator1 x_e, InputIterator2 y_b, OutputIterator z_b)
 {
-  using X = std::iterator_traits<InputIterator1>::value_type;
-  using Y = std::iterator_traits<InputIterator2>::value_type;
-  using Z = std::iterator_traits<OutputIterator>::value_type;
+  using X = typename std::iterator_traits<InputIterator1>::value_type;
+  using Y = typename std::iterator_traits<InputIterator2>::value_type;
+  using Z = typename std::iterator_traits<OutputIterator>::value_type;
 
   std::transform(std::forward<Exec>(exec), x_b, x_e, y_b, z_b, [](const X& x, const Y& y) -> Z { return x + y; });
 }
@@ -21,9 +21,9 @@ constexpr void xpy(Exec&& exec, InputIterator1 x_b, InputIterator1 x_e, InputIte
 template<class Exec, class InputIterator1, class InputIterator2, class OutputIterator>
 constexpr void elemwise_max(Exec&& exec, InputIterator1 x_b, InputIterator1 x_e, InputIterator2 y_b, OutputIterator z_b)
 {
-  using X = std::iterator_traits<InputIterator1>::value_type;
-  using Y = std::iterator_traits<InputIterator2>::value_type;
-  using Z = std::iterator_traits<OutputIterator>::value_type;
+  using X = typename std::iterator_traits<InputIterator1>::value_type;
+  using Y = typename std::iterator_traits<InputIterator2>::value_type;
+  using Z = typename std::iterator_traits<OutputIterator>::value_type;
   using std::max;
 
   std::transform(std::forward<Exec>(exec), x_b, x_e, y_b, z_b, [](const X& x, const Y& y) -> Z { return max(x, y); });
@@ -46,7 +46,7 @@ constexpr auto sum_red_alt(Exec&& exec, InputIterator vals_b, InputIterator vals
 template<class Exec, class InputIterator>
 constexpr auto max_red(Exec&& exec, InputIterator vals_b, InputIterator vals_e)
 {
-  using T = std::iterator_traits<InputIterator>::value_type;
+  using T = typename std::iterator_traits<InputIterator>::value_type;
   using std::max;
 
   return std::reduce(std::forward<Exec>(exec),

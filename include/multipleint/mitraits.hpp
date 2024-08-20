@@ -130,7 +130,7 @@ struct _next_widest<uint64_t>
 template<int Index, std::size_t BitWidth, typename BackingStorage>
 struct _int_pattern
 {
-  using IntMask = typename detail::_int_mask<Index, BitWidth, BackingStorage>;
+  using IntMask = detail::_int_mask<Index, BitWidth, BackingStorage>;
 
   static constexpr BackingStorage value =
       IntMask::pattern << (Index * (BitWidth + 1)) | _int_pattern<Index - 2, BitWidth, BackingStorage>::value;
@@ -139,7 +139,7 @@ struct _int_pattern
 template<std::size_t BitWidth, typename BackingStorage>
 struct _int_pattern<1, BitWidth, BackingStorage>
 {
-  using IntMask = typename detail::_int_mask<1, BitWidth, BackingStorage>;
+  using IntMask = detail::_int_mask<1, BitWidth, BackingStorage>;
 
   static constexpr BackingStorage value = IntMask::pattern << (BitWidth + 1);
 };
