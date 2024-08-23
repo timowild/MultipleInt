@@ -82,7 +82,7 @@ public:
 private:
   BackingStorage value_;
 
-private:
+public:
   /* clang-format off */
   template<std::size_t ExtractNumberAtIndex, typename T = std::make_signed_t<BackingStorage>>
   requires(ExtractNumberAtIndex <= IntCount)
@@ -107,7 +107,6 @@ private:
     return (val | neg_mask);
   }
 
-public:
   /* clang-format off */
   template<std::size_t AtMostIntCount> 
   requires(AtMostIntCount > 0 && AtMostIntCount <= IntCount)
@@ -222,10 +221,8 @@ public:
   {
     using value_type = std::make_signed_t<BackingStorage>;
 
-    value_type result {};
-
     // First value is current maximum
-    result = extract<0>();
+    value_type result {extract<0>()};
 
     if constexpr (IntCount >= 2) {
       [&result, this]<std::size_t... Idx>(std::index_sequence<Idx...>) constexpr
@@ -235,9 +232,8 @@ public:
           // During encoding numbers are inserted in reverse order,
           // decode them in reverse order to correct that
 
-          const value_type temp_result = extract<I, value_type>();
-
-          result = (result < temp_result) ? temp_result : result;
+          if (const value_type temp_result = extract<I, value_type>(); result < temp_result)
+            result = temp_result;
         };
 
         (f.template operator()<Idx>(), ...);

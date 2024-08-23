@@ -6,6 +6,12 @@ C++20 header-only library.
 
 # Building
 
+# Contributors
+
+Patrick Szegedi
+Benjamin Richard Sparks
+Timo Wild
+
 # Licensing
 
 MIT

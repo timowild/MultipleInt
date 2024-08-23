@@ -1,0 +1,76 @@
+{
+  "version": 2,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 20,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "release",
+      "displayName": "Generic debug build",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/release",
+      "cacheVariables": {
+        "multipleint_DEVELOPER_MODE": "ON",
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_COMPILER": "g++"
+      }
+    },
+    {
+      "name": "clang-release",
+      "displayName": "Default Configuration for clang release build",
+      "inherits": "release",
+      "binaryDir": "${sourceDir}/build/clang-release",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "clang++"
+      }
+    },
+    {
+      "name": "gcc-release",
+      "displayName": "Default Configuration for gcc release build",
+      "inherits": "release",
+      "binaryDir": "${sourceDir}/build/gcc-release",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "g++"
+      }
+    },
+    {
+      "name": "msvc-release",
+      "displayName": "Default Configuration for msvc release build",
+      "inherits": "release",
+      "binaryDir": "${sourceDir}/build/msvc-release",
+      "generator": "Visual Studio 17 2022",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "cl"
+      }
+    },
+    {
+      "name": "nvcc-release",
+      "displayName": "Default Configuration for nvcc release build",
+      "inherits": "release",
+      "binaryDir": "${sourceDir}/build/nvcc-release",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "nvcc"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "clang-release",
+      "configurePreset": "clang-release"
+    },
+    {
+      "name": "gcc-release",
+      "configurePreset": "clang-release"
+    },
+    {
+      "name": "msvc-release",
+      "configurePreset": "msvc-release"
+    },
+    {
+      "name": "nvcc-release",
+      "configurePreset": "nvcc-release"
+    }
+  ]
+}

@@ -50,12 +50,17 @@ constexpr BackingStorage _int_mask_v = _int_mask<IntCount, BitWidth, BackingStor
 template<std::size_t IntCount, std::size_t BitWidth, typename BackingStorage>
 struct _empty_mask
 {
-  static constexpr BackingStorage value = IntCount * (BitWidth + 1) == sizeof(BackingStorage) * 8
-      // ints and their carry bits take up entire storage space, empty
-      // mask is itself, "empty"
-      ? static_cast<BackingStorage>(0)
+  static constexpr BackingStorage value = []() consteval
+  {
+    if constexpr (IntCount * (BitWidth + 1) == sizeof(BackingStorage) * 8) {
+      // ints and their carry bits take up entire storage space, empty mask is itself, "empty"
+      return static_cast<BackingStorage>(0);
+
+    } else {
       // bits need to be padded
-      : ~((static_cast<BackingStorage>(1) << (IntCount * (BitWidth + 1))) - 1);
+      return ~((static_cast<BackingStorage>(1) << (IntCount * (BitWidth + 1))) - 1);
+    }
+  }();
 };
 
 template<std::size_t IntCount, std::size_t BitWidth, typename BackingStorage>

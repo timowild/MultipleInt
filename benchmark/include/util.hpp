@@ -2,7 +2,10 @@
 
 #include <execution>
 
-static constexpr auto acc_par = std::execution::par_unseq;
+inline constexpr auto exec_policy = std::execution::par_unseq;
+
+template<typename T>
+using Container = std::vector<T>;
 
 // https://stackoverflow.com/a/63821008
 namespace detail

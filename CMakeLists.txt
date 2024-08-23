@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.20)
 
 include(cmake/prelude.cmake)
 
@@ -10,6 +10,8 @@ project(
     DESCRIPTION "Store multiple small ints into one bigger int"
     LANGUAGES CXX
 )
+
+set(CMAKE_CXX_STANDARD 20)
 
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL "NVHPC")
   set(NVCXX_FLAGS -stdpar=gpu -gpu=cc61,cc75,cuda11.7)
