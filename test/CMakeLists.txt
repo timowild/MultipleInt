@@ -23,8 +23,6 @@ target_include_directories(
   multipleint_test ${warning_guard} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
 )
-target_compile_options(multipleint_test PRIVATE ${NVCXX_FLAGS})
-target_link_options(multipleint_test PRIVATE ${NVCXX_FLAGS})
 
 include(GoogleTest)
 gtest_discover_tests(multipleint_test)

@@ -26,11 +26,7 @@ foreach(BENCH_FILE ${BENCH_FILES})
     get_filename_component(BENCH_NAME ${BENCH_FILE} NAME_WLE)
     add_executable(multipleint_${BENCH_NAME} ${BENCH_FILE})
 
-    target_link_libraries(multipleint_${BENCH_NAME} PRIVATE 
-        benchmark::benchmark
-    )
-    target_include_directories(multipleint_${BENCH_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>)
+    target_link_libraries(multipleint_${BENCH_NAME} PRIVATE benchmark::benchmark)
+    target_include_directories(multipleint_${BENCH_NAME} ${warning_guard} PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>)
     target_compile_features(multipleint_${BENCH_NAME} PRIVATE cxx_std_20)
-    target_compile_options(multipleint_${BENCH_NAME} PRIVATE ${NVCXX_FLAGS})
-    target_link_options(multipleint_${BENCH_NAME} PRIVATE ${NVCXX_FLAGS})
 endforeach()

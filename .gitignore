@@ -99,5 +99,5 @@ build
 .vscode/
 .cache/
 
-# Benchmarks
-out.csv
+# Python
+scripts/__pycache__

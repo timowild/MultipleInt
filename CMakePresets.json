@@ -51,7 +51,7 @@
       "inherits": "release",
       "binaryDir": "${sourceDir}/build/nvcc-release",
       "cacheVariables": {
-        "CMAKE_CXX_COMPILER": "nvcc"
+        "CMAKE_CUDA_COMPILER": "nvcc"
       }
     }
   ],
