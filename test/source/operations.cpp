@@ -569,10 +569,10 @@ TEST(Maxima, OnlyMins)
   {
     using target_type = multipleint::multiple_int<3, std::uint8_t>;
 
-    constexpr auto l = target_type::encode<1>(std::array{-4});
-    constexpr auto r = target_type::encode<1>(std::array{-4});
+    constexpr auto l = target_type::encode<1>(std::array {-4});
+    constexpr auto r = target_type::encode<1>(std::array {-4});
 
-    constexpr auto expected = target_type::encode<1>(std::array{-4});
+    constexpr auto expected = target_type::encode<1>(std::array {-4});
 
     constexpr auto lrresult = max(l, r);
     EXPECT_EQ(expected.intv(), lrresult.intv());
@@ -588,10 +588,10 @@ TEST(Maxima, BothPos)
 {
   using target_type = multipleint::multiple_int<3, std::uint8_t>;
 
-  constexpr auto l = target_type::encode<1>(std::array{1});
-  constexpr auto r = target_type::encode<1>(std::array{2});
+  constexpr auto l = target_type::encode<1>(std::array {1});
+  constexpr auto r = target_type::encode<1>(std::array {2});
 
-  constexpr auto expected = target_type::encode<1>(std::array{2});
+  constexpr auto expected = target_type::encode<1>(std::array {2});
 
   constexpr auto lrresult = max(l, r);
   EXPECT_EQ(expected.intv(), lrresult.intv());
@@ -604,10 +604,10 @@ TEST(Maxima, BothNeg)
 {
   using target_type = multipleint::multiple_int<3, std::uint8_t>;
 
-  constexpr auto l = target_type::encode<1>(std::array{-1});
-  constexpr auto r = target_type::encode<1>(std::array{-2});
+  constexpr auto l = target_type::encode<1>(std::array {-1});
+  constexpr auto r = target_type::encode<1>(std::array {-2});
 
-  constexpr auto expected = target_type::encode<1>(std::array{-1});
+  constexpr auto expected = target_type::encode<1>(std::array {-1});
 
   constexpr auto lrresult = max(l, r);
   EXPECT_EQ(expected.intv(), lrresult.intv());
@@ -620,10 +620,10 @@ TEST(Maxima, DifferentSigns)
 {
   using target_type = multipleint::multiple_int<3, std::uint8_t>;
 
-  constexpr auto l = target_type::encode<1>(std::array{-1});
-  constexpr auto r = target_type::encode<1>(std::array{2});
+  constexpr auto l = target_type::encode<1>(std::array {-1});
+  constexpr auto r = target_type::encode<1>(std::array {2});
 
-  constexpr auto expected = target_type::encode<1>(std::array{2});
+  constexpr auto expected = target_type::encode<1>(std::array {2});
 
   constexpr auto lrresult = max(l, r);
   EXPECT_EQ(expected.intv(), lrresult.intv());
@@ -637,10 +637,10 @@ TEST(Maxima, Mins)
   using target_type = multipleint::multiple_int<3, std::uint8_t>;
 
   {
-    constexpr auto l = target_type::encode<1>(std::array{-4});
-    constexpr auto r = target_type::encode<1>(std::array{-1});
+    constexpr auto l = target_type::encode<1>(std::array {-4});
+    constexpr auto r = target_type::encode<1>(std::array {-1});
 
-    constexpr auto expected = target_type::encode<1>(std::array{-1});
+    constexpr auto expected = target_type::encode<1>(std::array {-1});
 
     constexpr auto lrresult = max(l, r);
     EXPECT_EQ(expected.intv(), lrresult.intv());
@@ -650,10 +650,10 @@ TEST(Maxima, Mins)
   }
 
   {
-    constexpr auto l = target_type::encode<1>(std::array{-4});
-    constexpr auto r = target_type::encode<1>(std::array{+1});
+    constexpr auto l = target_type::encode<1>(std::array {-4});
+    constexpr auto r = target_type::encode<1>(std::array {+1});
 
-    constexpr auto expected = target_type::encode<1>(std::array{+1});
+    constexpr auto expected = target_type::encode<1>(std::array {+1});
 
     constexpr auto lrresult = max(l, r);
     EXPECT_EQ(expected.intv(), lrresult.intv());

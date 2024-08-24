@@ -341,6 +341,7 @@ public:
 
     BackingStorage un_minus = un_minus_wcarry & traits::int_mask;
     BackingStorage with_errors = un_minus | errors | this->carry();
+
     return multiple_int<BitWidth, BackingStorage> {with_errors};
   }
 };
