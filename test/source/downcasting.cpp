@@ -8,7 +8,7 @@
 TEST(DownCasting, Simple)
 {
   {
-    constexpr auto l = multipleint::multiple_int<7, std::uint16_t>::encode<2>({0b01111101, 0b0000111});
+    constexpr auto l = multipleint::multiple_int<7, std::uint16_t>::encode<2>({0b0000111, 0b01111101});
 
     constexpr auto t = static_cast<multipleint::multiple_int<3, std::uint8_t>>(l);
 
@@ -17,7 +17,7 @@ TEST(DownCasting, Simple)
   }
 
   {
-    constexpr auto l = multipleint::multiple_int<15, std::uint32_t>::encode<2>({0b011101111101101, 0b001010100011000});
+    constexpr auto l = multipleint::multiple_int<15, std::uint32_t>::encode<2>({0b001010100011000, 0b011101111101101});
 
     constexpr auto t = static_cast<multipleint::multiple_int<7, std::uint16_t>>(l);
 
@@ -31,7 +31,7 @@ TEST(DownCasting, Interleaved)
 {
   {
     constexpr auto l = multipleint::multiple_int<9, std::uint64_t>::encode<6>(
-        {0b110011001, 0b001100000, 0b101010101, 0b111111111, 0b000000000, 0b100000001});
+        {0b100000001, 0b000000000, 0b111111111, 0b101010101, 0b001100000, 0b110011001});
 
     // 11001
     // 00000

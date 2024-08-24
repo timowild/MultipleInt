@@ -6,17 +6,15 @@
 #include "../include/bench_targets.hpp"
 #include "../include/util.hpp"
 
-template<typename Integer,
-         typename ComparingInteger,
-         unsigned int BitWidth>
+template<typename Integer, typename ComparingInteger, unsigned int BitWidth>
 static void elemwise_max_int_bench(benchmark::State& state)
 {
   const auto n_elements = state.range(0);
-  const Container<Integer> x (n_elements * ((8 * sizeof(ComparingInteger)) / (BitWidth + 1)), Integer {1});
+  const Container<Integer> x(n_elements * ((8 * sizeof(ComparingInteger)) / (BitWidth + 1)), Integer {1});
 
   // e.g. creating std::uint8_t, but multiple_int pendant calculates in std::uint32_t -> 4
   // more elements for same "size"
-  Container<Integer> y (n_elements * ((8 * sizeof(ComparingInteger)) / (BitWidth + 1)), Integer {2});
+  Container<Integer> y(n_elements * ((8 * sizeof(ComparingInteger)) / (BitWidth + 1)), Integer {2});
 
   for (auto _ : state) {
     bench::elemwise_max(exec_policy, x.cbegin(), x.cend(), y.cbegin(), y.begin());
@@ -30,8 +28,8 @@ static void elemwise_max_multi_int_bench(benchmark::State& state)
   auto ys = array_repeat<T::IntCount, int>(2);
 
   const auto n_elements = state.range(0);
-  const Container<T> x (n_elements, T::template encode<T::IntCount>(xs));
-  Container<T> y (n_elements, T::template encode<T::IntCount>(ys));
+  const Container<T> x(n_elements, T::template encode<T::IntCount>(xs));
+  Container<T> y(n_elements, T::template encode<T::IntCount>(ys));
 
   for (auto _ : state) {
     bench::elemwise_max(exec_policy, x.cbegin(), x.cend(), y.cbegin(), y.begin());
@@ -39,9 +37,7 @@ static void elemwise_max_multi_int_bench(benchmark::State& state)
 }
 
 // needs to be first defined benchmark!
-BENCHMARK_TEMPLATE(elemwise_max_int_bench, std::uint32_t, std::uint32_t, 31)
-    ->Name("_warmup_")
-    ->Arg(1 << 28);
+BENCHMARK_TEMPLATE(elemwise_max_int_bench, std::uint32_t, std::uint32_t, 31)->Name("_warmup_")->Arg(1 << 28);
 
 // 64 bit internal storage
 //--------------------------------------------------------------------------------------------//

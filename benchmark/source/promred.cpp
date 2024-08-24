@@ -7,15 +7,12 @@
 #include "../include/bench_targets.hpp"
 #include "../include/util.hpp"
 
-template<typename SmallerInteger,
-         typename BiggerInteger,
-         typename ComparingInteger,
-         unsigned int BitWidth>
+template<typename SmallerInteger, typename BiggerInteger, typename ComparingInteger, unsigned int BitWidth>
 static void sum_prom_int_bench(benchmark::State& state)
 {
   const auto n_elements = state.range(0);
-  const Container<SmallerInteger> vals (n_elements * ((8 * sizeof(ComparingInteger)) / (BitWidth + 1)),
-                                        SmallerInteger(1));
+  const Container<SmallerInteger> vals(n_elements * ((8 * sizeof(ComparingInteger)) / (BitWidth + 1)),
+                                       SmallerInteger(1));
 
   const auto init = BiggerInteger {};
   for (auto _ : state) {
@@ -30,7 +27,7 @@ static void sum_prom_multi_int_bench(benchmark::State& state)
   auto is = array_repeat<BiggerInteger::IntCount, int>(0);
 
   const auto n_elements = state.range(0);
-  const Container<SmallerInteger> vals (n_elements, SmallerInteger::template encode<SmallerInteger::IntCount>(xs));
+  const Container<SmallerInteger> vals(n_elements, SmallerInteger::template encode<SmallerInteger::IntCount>(xs));
   const auto init = BiggerInteger::template encode<BiggerInteger::IntCount>(is);
 
   for (auto _ : state) {
@@ -39,9 +36,7 @@ static void sum_prom_multi_int_bench(benchmark::State& state)
 }
 
 // needs to be first defined benchmark!
-BENCHMARK_TEMPLATE(sum_prom_int_bench, std::uint32_t, std::uint64_t, std::uint64_t, 31)
-    ->Name("_warmup_")
-    ->Arg(1 << 28);
+BENCHMARK_TEMPLATE(sum_prom_int_bench, std::uint32_t, std::uint64_t, std::uint64_t, 31)->Name("_warmup_")->Arg(1 << 28);
 
 // 64/32 bit
 //--------------------------------------------------------------------------------------------//
@@ -51,9 +46,9 @@ BENCHMARK_TEMPLATE(sum_prom_int_bench, std::uint32_t, std::uint64_t, std::uint64
     ->RangeMultiplier(1 << 2)
     ->Range(1 << 14, 1 << 30);
 
-BENCHMARK_TEMPLATE(sum_prom_multi_int_bench, 
-                                   multipleint::multiple_int<15, std::uint32_t>,
-                                   multipleint::multiple_int<31, std::uint64_t>)
+BENCHMARK_TEMPLATE(sum_prom_multi_int_bench,
+                   multipleint::multiple_int<15, std::uint32_t>,
+                   multipleint::multiple_int<31, std::uint64_t>)
     ->Name("promred-1-mi<15-31, u32-u64>")
     ->RangeMultiplier(1 << 2)
     ->Range(1 << 14, 1 << 30);
@@ -63,9 +58,9 @@ BENCHMARK_TEMPLATE(sum_prom_int_bench, std::uint32_t, std::uint64_t, std::uint64
     ->RangeMultiplier(1 << 2)
     ->Range(1 << 14, 1 << 30);
 
-BENCHMARK_TEMPLATE(sum_prom_multi_int_bench, 
-                                   multipleint::multiple_int<9, std::uint32_t>,
-                                   multipleint::multiple_int<19, std::uint64_t>)
+BENCHMARK_TEMPLATE(sum_prom_multi_int_bench,
+                   multipleint::multiple_int<9, std::uint32_t>,
+                   multipleint::multiple_int<19, std::uint64_t>)
     ->Name("promred-1-mi<9-19, u32-u64>")
     ->RangeMultiplier(1 << 2)
     ->Range(1 << 14, 1 << 30);
@@ -75,9 +70,9 @@ BENCHMARK_TEMPLATE(sum_prom_int_bench, std::uint32_t, std::uint64_t, std::uint64
     ->RangeMultiplier(1 << 2)
     ->Range(1 << 14, 1 << 30);
 
-BENCHMARK_TEMPLATE(sum_prom_multi_int_bench, 
-                                   multipleint::multiple_int<7, std::uint32_t>,
-                                   multipleint::multiple_int<15, std::uint64_t>)
+BENCHMARK_TEMPLATE(sum_prom_multi_int_bench,
+                   multipleint::multiple_int<7, std::uint32_t>,
+                   multipleint::multiple_int<15, std::uint64_t>)
     ->Name("promred-1-mi<7-15, u32-u64>")
     ->RangeMultiplier(1 << 2)
     ->Range(1 << 14, 1 << 30);
@@ -92,9 +87,9 @@ BENCHMARK_TEMPLATE(sum_prom_int_bench, std::uint16_t, std::uint32_t, std::uint32
     ->RangeMultiplier(1 << 2)
     ->Range(1 << 14, 1 << 30);
 
-BENCHMARK_TEMPLATE(sum_prom_multi_int_bench, 
-                                   multipleint::multiple_int<7, std::uint16_t>,
-                                   multipleint::multiple_int<15, std::uint32_t>)
+BENCHMARK_TEMPLATE(sum_prom_multi_int_bench,
+                   multipleint::multiple_int<7, std::uint16_t>,
+                   multipleint::multiple_int<15, std::uint32_t>)
     ->Name("promred-2-mi<7-15, u16-u32>")
     ->RangeMultiplier(1 << 2)
     ->Range(1 << 14, 1 << 30);
@@ -104,9 +99,9 @@ BENCHMARK_TEMPLATE(sum_prom_int_bench, std::uint16_t, std::uint32_t, std::uint32
     ->RangeMultiplier(1 << 2)
     ->Range(1 << 14, 1 << 30);
 
-BENCHMARK_TEMPLATE(sum_prom_multi_int_bench, 
-                                   multipleint::multiple_int<4, std::uint16_t>,
-                                   multipleint::multiple_int<9, std::uint32_t>)
+BENCHMARK_TEMPLATE(sum_prom_multi_int_bench,
+                   multipleint::multiple_int<4, std::uint16_t>,
+                   multipleint::multiple_int<9, std::uint32_t>)
     ->Name("promred-2-mi<4-9, u16-u32>")
     ->RangeMultiplier(1 << 2)
     ->Range(1 << 14, 1 << 30);
@@ -116,9 +111,9 @@ BENCHMARK_TEMPLATE(sum_prom_int_bench, std::uint16_t, std::uint32_t, std::uint32
     ->RangeMultiplier(1 << 2)
     ->Range(1 << 14, 1 << 30);
 
-BENCHMARK_TEMPLATE(sum_prom_multi_int_bench, 
-                                   multipleint::multiple_int<3, std::uint16_t>,
-                                   multipleint::multiple_int<7, std::uint32_t>)
+BENCHMARK_TEMPLATE(sum_prom_multi_int_bench,
+                   multipleint::multiple_int<3, std::uint16_t>,
+                   multipleint::multiple_int<7, std::uint32_t>)
     ->Name("promred-2-mi<3-7, u16-u32>")
     ->RangeMultiplier(1 << 2)
     ->Range(1 << 14, 1 << 30);
@@ -134,8 +129,8 @@ BENCHMARK_TEMPLATE(sum_prom_int_bench, std::uint8_t, std::uint16_t, std::uint16_
     ->Range(1 << 14, 1 << 30);
 
 BENCHMARK_TEMPLATE(sum_prom_multi_int_bench,
-                                   multipleint::multiple_int<3, std::uint8_t>,
-                                   multipleint::multiple_int<7, std::uint16_t>)
+                   multipleint::multiple_int<3, std::uint8_t>,
+                   multipleint::multiple_int<7, std::uint16_t>)
     ->Name("promred-3-mi<3-7, u8-u16>")
     ->RangeMultiplier(1 << 2)
     ->Range(1 << 14, 1 << 30);
@@ -146,8 +141,8 @@ BENCHMARK_TEMPLATE(sum_prom_int_bench, std::uint8_t, std::uint16_t, std::uint16_
     ->Range(1 << 14, 1 << 30);
 
 BENCHMARK_TEMPLATE(sum_prom_multi_int_bench,
-                                   multipleint::multiple_int<1, std::uint8_t>,
-                                   multipleint::multiple_int<3, std::uint16_t>)
+                   multipleint::multiple_int<1, std::uint8_t>,
+                   multipleint::multiple_int<3, std::uint16_t>)
     ->Name("promred-3-mi<1-3, u8-u16>")
     ->RangeMultiplier(1 << 2)
     ->Range(1 << 14, 1 << 30);

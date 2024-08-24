@@ -15,7 +15,7 @@ TEST(ErrorMax, NormalValuesWithErrors)
   EXPECT_EQ(0b0110'0110, numTimeThree.intv());
   EXPECT_EQ(0b1000'1000, numTimeThree.carry());
 
-  constexpr auto sec = target_type::encode<2>({0b101, 0b001});
+  constexpr auto sec = target_type::encode<2>({0b001, 0b101});
 
   constexpr auto m = max(numTimeThree, sec);
   EXPECT_EQ(0b0110'0001, m.intv());

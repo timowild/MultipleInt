@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>  // std::max
 #include <array>
 #include <type_traits>
 
@@ -85,15 +86,15 @@ private:
 public:
   /* clang-format off */
   template<std::size_t ExtractNumberAtIndex, typename T = std::make_signed_t<BackingStorage>>
-  requires(ExtractNumberAtIndex <= IntCount)
+  requires(ExtractNumberAtIndex < IntCount)
   constexpr auto extract() const -> T
   /* clang-format on */
   {
     // Create a mask with #bit-width bits set to one
     constexpr auto mask = (static_cast<BackingStorage>(1) << BitWidth) - 1;
 
-    // Extracts one number from the internal storage
-    const auto val = [this]()
+    // Extract one number from the internal storage
+    const auto val = [this]() constexpr
     {
       if constexpr (ExtractNumberAtIndex == 0)
         return (value_ & mask);
@@ -108,6 +109,27 @@ public:
   }
 
   /* clang-format off */
+  template<std::size_t EncodeNumberAtIndex> 
+  requires(EncodeNumberAtIndex < IntCount)
+  constexpr auto encode(int input) -> void
+  /* clang-format on */
+  {
+    constexpr auto mask = (static_cast<BackingStorage>(1) << BitWidth) - 1;
+    constexpr auto shift = (BitWidth + 1) * EncodeNumberAtIndex;
+    constexpr auto delete_mask = ~(mask << shift);
+
+    // Clear value bits at EncodeNumberAtIndex
+    value_ &= delete_mask;
+
+    // Insert value
+    if constexpr (shift == 0) {
+      value_ |= (input & mask);
+    } else {
+      value_ |= ((input & mask) << shift);
+    }
+  }
+
+  /* clang-format off */
   template<std::size_t AtMostIntCount> 
   requires(AtMostIntCount > 0 && AtMostIntCount <= IntCount)
   static constexpr auto encode(const std::array<int, AtMostIntCount>& input) -> multiple_int<BitWidth, BackingStorage>
@@ -116,15 +138,18 @@ public:
     // Create a mask with #bit-width bits set to one
     constexpr auto mask = (static_cast<BackingStorage>(1) << BitWidth) - 1;
 
-    BackingStorage value_ = 0;
+    BackingStorage value_ {};
 
     if constexpr (AtMostIntCount > 1) {
       [&input, &value_]<std::size_t... Idx>(std::index_sequence<Idx...>) constexpr
       {
         const auto f = [&input, &value_]<std::size_t I>() constexpr
         {
+          // Encoding numbers are inserted in reverse order
+          // -> input[0] is stored in the "lower value" bits
+
           // Insert value
-          value_ |= (std::get<I>(input) & mask);
+          value_ |= (std::get<AtMostIntCount - 1 - I>(input) & mask);
           // Shift by bit width + 1 (carry bit)
           value_ <<= (BitWidth + 1);
         };
@@ -133,8 +158,8 @@ public:
       }(std::make_index_sequence<AtMostIntCount - 1> {});
     }
 
-    // Don't shift the last value
-    value_ |= (std::get<AtMostIntCount - 1>(input) & mask);
+    // Don't shift the last value (i.e. first value in array)
+    value_ |= (std::get<0>(input) & mask);
 
     return multiple_int<BitWidth, BackingStorage> {value_};
   }
@@ -148,18 +173,12 @@ public:
     std::array<int, AtMostIntCount> data {};
 
     if constexpr (AtMostIntCount >= 1) {
+      /* clang-format off */
       [&data, this]<std::size_t... Idx>(std::index_sequence<Idx...>) constexpr
-      {
-        const auto f = [&data, this]<std::size_t I>() constexpr
-        {
-          // During encoding numbers are inserted in reverse order,
-          // decode them in reverse order to correct that
-
-          std::get<AtMostIntCount - 1 - I>(data) = extract<I, int>();
-        };
-
-        (f.template operator()<Idx>(), ...);
+      { 
+        ((std::get<Idx>(data) = extract<Idx, int>()), ...); 
       }(std::make_index_sequence<AtMostIntCount> {});
+      /* clang-format on */
     }
 
     return data;
@@ -168,24 +187,17 @@ public:
   constexpr auto sum() const -> std::make_signed_t<BackingStorage>
   {
     using value_type = std::make_signed_t<BackingStorage>;
-    value_type result {};
 
-    if constexpr (IntCount >= 1) {
-      [&result, this]<std::size_t... Idx>(std::index_sequence<Idx...>) constexpr
-      {
-        const auto f = [&result, this]<std::size_t I>() constexpr
-        {
-          // During encoding numbers are inserted in reverse order,
-          // decode them in reverse order to correct that
+    /* clang-format off */
+    return [this]<std::size_t... Idx>(std::index_sequence<Idx...>) constexpr
+    {
+      value_type result {};
 
-          result += extract<I, value_type>();
-        };
+      ((result += extract<Idx, value_type>()), ...);
 
-        (f.template operator()<Idx>(), ...);
-      }(std::make_index_sequence<IntCount> {});
-    }
-
-    return result;
+      return result;
+    }(std::make_index_sequence<IntCount> {});
+    /* clang-format on */
   }
 
   constexpr friend auto max(multiple_int<BitWidth, BackingStorage> lhs, multiple_int<BitWidth, BackingStorage> rhs)
@@ -225,19 +237,12 @@ public:
     value_type result {extract<0>()};
 
     if constexpr (IntCount >= 2) {
+      /* clang-format off */
       [&result, this]<std::size_t... Idx>(std::index_sequence<Idx...>) constexpr
       {
-        const auto f = [&result, this]<std::size_t I>() constexpr
-        {
-          // During encoding numbers are inserted in reverse order,
-          // decode them in reverse order to correct that
-
-          if (const value_type temp_result = extract<I, value_type>(); result < temp_result)
-            result = temp_result;
-        };
-
-        (f.template operator()<Idx>(), ...);
+        result = std::max({result, extract<Idx, value_type>()...});
       }(detail::index_sequence_from_to<1, IntCount> {});
+      /* clang-format on */
     }
 
     return result;
@@ -255,37 +260,28 @@ public:
 
     constexpr auto trunc = detail::truncation_mask_v<IntCount, BitWidth, SmallerBitWidth, BackingStorage>;
 
-    // EXPECT_EQ(0b00'000111'000111'000111'000111'000111, trunc);
-
     auto truncated = value_ & trunc;
-    // EXPECT_EQ(0b00'000001'000000'000101'000111'000000, truncated);
 
     // rounds up odd counts of numbers, as these are the 0th, 2nd, 4th etc.
     constexpr auto lower_shift = (IntCount % 2 == 0) ? IntCount / 2 : (IntCount + 1) / 2;
 
     // matches lower "half" of truncated numbers
     constexpr auto lower = (static_cast<BackingStorage>(1) << (lower_shift * (BitWidth + 1))) - 1;
-    // EXPECT_EQ(0b00'000000'000000'111111'111111'111111, lower);
 
     // matches upper "half" of truncated numbers
     constexpr auto upper = ~lower & ~source_type::traits::empty_mask;
-    // EXPECT_EQ(0b00'111111'111111'000000'000000'000000, upper);
 
     // extracts integers in the lower "half"
     auto lower_half = static_cast<SmallerBackingStorage>(truncated & lower);
-    // EXPECT_EQ(static_cast<SmallerBackingStorage>(0b0'101'000'111'000'000), lower_half)
 
     // extracts integers in the upper "half"
     auto upper_half = truncated & upper;
-    // EXPECT_EQ(0b00'000001'000000'000000'000000'000000, upper_half);
 
     constexpr auto upper_shift_down = ((IntCount % 2 == 0) ? (IntCount - 1) : (IntCount)) * (BitWidth + 1) / 2;
     auto upper_half2 = static_cast<SmallerBackingStorage>(upper_half >> upper_shift_down);
-    // EXPECT_EQ(static_cast<SmallerBackingStorage>(0b0'000'001'000'000'000), upper_half2)
 
     // merge results
     return target_type {static_cast<SmallerBackingStorage>(lower_half | upper_half2)};
-    // EXPECT_EQ(0b0'101'001'111'000'000, result);
   }
 
   constexpr BackingStorage intv() const { return this->value_ & traits::int_mask; }

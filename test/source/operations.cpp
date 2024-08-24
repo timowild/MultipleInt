@@ -137,8 +137,8 @@ TEST(Subtraction, NoOverflow)
 
   // no carries in LHS or RHS, no min error bit
   {
-    constexpr auto l = target_type::encode<2>({1, 2});
-    constexpr auto r = target_type::encode<2>({-1, 1});
+    constexpr auto l = target_type::encode<2>({2, 1});
+    constexpr auto r = target_type::encode<2>({1, -1});
     constexpr auto out = l - r;
     constexpr auto expected_int = 0b0'010'0'001;
     constexpr auto expected_carry = 0b0;
@@ -162,7 +162,7 @@ TEST(Subtraction, NoOverflow)
   // no carries in LHS, carry in RHS, no min error bit
   {
     constexpr auto l = target_type::encode<2>({-3, -3});
-    constexpr auto r = target_type::encode<2>({3, 1}) + target_type::encode<2>({3, 1});
+    constexpr auto r = target_type::encode<2>({1, 3}) + target_type::encode<2>({1, 3});
 
     EXPECT_EQ(0b0110'0010, r.intv());
     EXPECT_EQ(0b1000'0000, r.carry());
@@ -178,7 +178,7 @@ TEST(Subtraction, NoOverflow)
   // no carries in LHS, set carries in RHS, min error bits
   {
     constexpr auto l = target_type::encode<2>({-4, -4});
-    constexpr auto r = target_type::encode<2>({3, -2}) + target_type::encode<2>({3, -2});
+    constexpr auto r = target_type::encode<2>({-2, 3}) + target_type::encode<2>({-2, 3});
 
     EXPECT_EQ(0b0110'0100, r.intv());
     EXPECT_EQ(0b1000'0000, r.carry());
@@ -194,12 +194,12 @@ TEST(Subtraction, NoOverflow)
 
   // carry in LHS, none in RHS, no min error bit
   {
-    constexpr auto l = target_type::encode<2>({3, 1}) + target_type::encode<2>({3, 1});
+    constexpr auto l = target_type::encode<2>({1, 3}) + target_type::encode<2>({1, 3});
 
     EXPECT_EQ(0b0110'0010, l.intv());
     EXPECT_EQ(0b1000'0000, l.carry());
 
-    constexpr auto r = target_type::encode<2>({-1, 1});
+    constexpr auto r = target_type::encode<2>({1, -1});
     constexpr auto out = l - r;
     constexpr auto expected_int = 0b0'111'0'001;
     constexpr auto expected_carry = 0b1000'0000;
@@ -210,7 +210,7 @@ TEST(Subtraction, NoOverflow)
 
   // carry in LHS, none in RHS, min error bits
   {
-    constexpr auto l = target_type::encode<2>({3, 1}) + target_type::encode<2>({3, -2});
+    constexpr auto l = target_type::encode<2>({1, 3}) + target_type::encode<2>({-2, 3});
 
     EXPECT_EQ(0b0110'0111, l.intv());
     EXPECT_EQ(0b1000'0000, l.carry());
@@ -226,7 +226,7 @@ TEST(Subtraction, NoOverflow)
 
   // carries in LHS & RHS, no min error bits
   {
-    constexpr auto v = target_type::encode<2>({3, -1}) + target_type::encode<2>({3, -1});
+    constexpr auto v = target_type::encode<2>({-1, 3}) + target_type::encode<2>({-1, 3});
 
     EXPECT_EQ(0b0110'0110, v.intv());
     EXPECT_EQ(0b1000'0000, v.carry());
@@ -243,7 +243,7 @@ TEST(Subtraction, NoOverflow)
 
   // carries in LHS & RHS, min error bits
   {
-    constexpr auto v = target_type::encode<2>({3, -2}) + target_type::encode<2>({3, -2});
+    constexpr auto v = target_type::encode<2>({-2, 3}) + target_type::encode<2>({-2, 3});
 
     EXPECT_EQ(0b0110'0100, v.intv());
     EXPECT_EQ(0b1000'0000, v.carry());
@@ -318,7 +318,7 @@ TEST(Addition, PartiallyOverflowing4Ints7Bit)
   EXPECT_EQ(0x0, l.carry());
 
   // Will overflow on the lower two ints, but keep the upper two
-  constexpr auto r = multipleint::multiple_int<7, std::uint32_t>::encode<4>({0x00, 0x00, 0x01, 0x01});
+  constexpr auto r = multipleint::multiple_int<7, std::uint32_t>::encode<4>({0x01, 0x01, 0x00, 0x00});
   constexpr auto s = l + r;
 
   constexpr auto expected_s = 0x3F'3F'40'40;
@@ -420,17 +420,17 @@ TEST(Max, FourInt32Bit)
 {
   using target_type = multipleint::multiple_int<7, std::uint32_t>;
 
-  constexpr auto l = target_type::encode<4>({0x70, 0x70, 0x0E, 0x0E});
-  constexpr auto r = target_type::encode<4>({0x7F, 0x7F, 0x0B, 0x7A});
+  constexpr auto l = target_type::encode<4>({0x0E, 0x0E, 0x70, 0x70});
+  constexpr auto r = target_type::encode<4>({0x7A, 0x0B, 0x7F, 0x7F});
 
-  constexpr auto s = std::numeric_limits<target_type>::max() + target_type::encode<4>({0x01, 0x01, 0x00, 0x00});
-  constexpr auto expected_s = target_type::encode<4>({0x40, 0x40, 0x3F, 0x3F});
+  constexpr auto s = std::numeric_limits<target_type>::max() + target_type::encode<4>({0x00, 0x00, 0x01, 0x01});
+  constexpr auto expected_s = target_type::encode<4>({0x3F, 0x3F, 0x40, 0x40});
   EXPECT_EQ(expected_s.intv(), s.intv()) << "Expected " << std::hex << expected_s.intv() << ", got " << s.intv();
   EXPECT_EQ(0x80'80'00'00, s.carry());
 
   constexpr auto max_lr1 = max(l, r);
   constexpr auto max_lr2 = max(r, l);
-  constexpr auto exp_lr = target_type::encode<4>({0x7F, 0x7F, 0x0E, 0x0E});
+  constexpr auto exp_lr = target_type::encode<4>({0x0E, 0x0E, 0x7F, 0x7F});
 
   EXPECT_EQ(exp_lr.intv(), max_lr1.intv());
   EXPECT_EQ(0, max_lr1.carry());
@@ -440,7 +440,7 @@ TEST(Max, FourInt32Bit)
 
   constexpr auto max_sr1 = max(s, r);
   constexpr auto max_sr2 = max(r, s);
-  constexpr auto exp_sr = target_type::encode<4>({0x7F, 0x7F, 0x3F, 0x3F});
+  constexpr auto exp_sr = target_type::encode<4>({0x3F, 0x3F, 0x7F, 0x7F});
 
   EXPECT_EQ(exp_sr.intv(), max_sr1.intv());
   EXPECT_EQ(0x00'00'00'00, max_sr1.carry());
@@ -450,7 +450,7 @@ TEST(Max, FourInt32Bit)
 
   constexpr auto max_sl1 = max(s, l);
   constexpr auto max_sl2 = max(l, s);
-  constexpr auto exp_sl = target_type::encode<4>({0x70, 0x70, 0x3F, 0x3F});
+  constexpr auto exp_sl = target_type::encode<4>({0x3F, 0x3F, 0x70, 0x70});
 
   EXPECT_EQ(exp_sl.intv(), max_sl1.intv());
   EXPECT_EQ(0x00'00'00'00, max_sl1.carry());

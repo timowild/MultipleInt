@@ -6,13 +6,11 @@
 #include "../include/bench_targets.hpp"
 #include "../include/util.hpp"
 
-template<typename Integer,
-         typename ComparingInteger,
-         unsigned int BitWidth>
+template<typename Integer, typename ComparingInteger, unsigned int BitWidth>
 static void max_red_int_bench(benchmark::State& state)
 {
   const auto n_elements = state.range(0);
-  const Container<Integer> vals (n_elements * ((8 * sizeof(ComparingInteger)) / (BitWidth + 1)), Integer {1});
+  const Container<Integer> vals(n_elements * ((8 * sizeof(ComparingInteger)) / (BitWidth + 1)), Integer {1});
 
   for (auto _ : state) {
     benchmark::DoNotOptimize(bench::max_red(exec_policy, vals.cbegin(), vals.cend()));
@@ -25,7 +23,7 @@ static void max_red_multi_int_bench(benchmark::State& state)
   auto xs = array_repeat<T::IntCount, int>(1);
 
   const auto n_elements = state.range(0);
-  const Container<T> vals (n_elements, T::template encode<T::IntCount>(xs));
+  const Container<T> vals(n_elements, T::template encode<T::IntCount>(xs));
 
   for (auto _ : state) {
     benchmark::DoNotOptimize(bench::max_red(exec_policy, vals.cbegin(), vals.cend()).max());

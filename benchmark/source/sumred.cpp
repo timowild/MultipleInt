@@ -6,9 +6,7 @@
 #include "../include/bench_targets.hpp"
 #include "../include/util.hpp"
 
-template<typename Integer,
-         typename ComparingInteger,
-         unsigned int BitWidth>
+template<typename Integer, typename ComparingInteger, unsigned int BitWidth>
 static void sum_red_int_bench(benchmark::State& state)
 {
   const auto n_elements = state.range(0);
@@ -37,9 +35,7 @@ static void sum_red_multi_int_bench(benchmark::State& state)
 }
 
 // needs to be first defined benchmark!
-BENCHMARK_TEMPLATE(sum_red_int_bench, std::uint32_t, std::uint32_t, 31)
-    ->Name("_warmup_")
-    ->Arg(1 << 28);
+BENCHMARK_TEMPLATE(sum_red_int_bench, std::uint32_t, std::uint32_t, 31)->Name("_warmup_")->Arg(1 << 28);
 
 // 64 bit internal storage
 //--------------------------------------------------------------------------------------------//
