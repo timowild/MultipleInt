@@ -72,7 +72,7 @@ int main()
     using BiggerBackingStorage = uint64_t;
     using MySmallerMultipleInt = multipleint::multiple_int<BitWidth / 2, SmallerBackingStorage>;
     using MyBiggerMultipleInt = multipleint::multiple_int<BitWidth * 2 + 1, BiggerBackingStorage>;
-    MySmallerMultipleInt smallerMultipleInt = static_cast<MySmallerMultipleInt>(p1); // Possible lose of data
+    auto smallerMultipleInt = static_cast<MySmallerMultipleInt>(p1); // Possible loss of data
     MyBiggerMultipleInt biggerMultipleInt = p1;
 }
 ```
