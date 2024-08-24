@@ -4,13 +4,13 @@ The performance of parallel algorithms is in most cases memory bound which means
 
 MultipleInt is a C++20 header-only library which takes over these bit-shifiting operations so that multiple integers can be encoding from and decoding into a single integer. In addition, several operations can be applied on these packed integers (called `multiple_int`s) which consist in:
 
-1) Taking the negative value of every stored integer
-2) Taking the sum of all stored integers
-3) Finding the maximum of all stored integers
-4) Adding and subtracting two `multiple_int`s
-5) Finding the element-wise maximum of two `multiple_int`s
-6) Upcasting a `multiple_int` into a twice as large datatype from `BitWidth` to `2 * BitWidth + 1` wide integers
-7) Downcasting a `multiple_int` into a half as large datatype from  `2 * BitWidth + 1` to `BitWidth` wide integers
+1. Taking the negative value of every stored integer
+2. Taking the sum of all stored integers
+3. Finding the maximum of all stored integers
+4. Adding and subtracting two `multiple_int`s
+5. Finding the element-wise maximum of two `multiple_int`s
+6. Upcasting a `multiple_int` into a twice as large datatype from `BitWidth` to `2 * BitWidth + 1` wide integers
+7. Downcasting a `multiple_int` into a half as large datatype from  `2 * BitWidth + 1` to `BitWidth` wide integers
 
 ## Example
 
@@ -46,28 +46,28 @@ int main()
     packedIntegers.encode<3>(-1);
     SignedBackingStorage extractedInteger = packedIntegers.extract<3>(); // = -1
 
-    // 1)
+    // 1.
     MyMultipleInt minusPackedIntegers = -packedIntegers; 
     std::array<int, 4> minusDecodedIntegers = minusPackedIntegers.decode<4>(); // = [-1, 2, 3, 1]
 
-    // 2)
+    // 2.
     SignedBackingStorage sum = minusPackedIntegers.sum(); // = -1 + 2 + 3 + 1 = 5
 
-    // 3)
+    // 3.
     SignedBackingStorage maxValue = minusPackedIntegers.max(); // = 3
 
-    // 4)
+    // 4.
     MyMultipleInt doubled = minusPackedIntegers + minusPackedIntegers;
     std::array<int, 4> doubledDecodedIntegers = doubled.decode<4>(); // = [-2, 4, 6, 2]
 
-    // 5)
+    // 5.
     using std::max; // Enable ADL
     constexpr MyMultipleInt p1 = MyMultipleInt::encode<4>({0, 3, 10, -8});
     constexpr MyMultipleInt p2 = MyMultipleInt::encode<4>({-1, 3, -4, 2});
     MyMultipleInt elementWiseMax = max(p1, p2);
     std::array<int, 4> elementWiseMaxDecodedInteger = elementWiseMax.decode<4>(); // = [0, 3, 10, 2]
 
-    // 6) and 7)
+    // 6. and 7.
     using SmallerBackingStorage = uint16_t;
     using BiggerBackingStorage = uint64_t;
     using MySmallerMultipleInt = multipleint::multiple_int<BitWidth / 2, SmallerBackingStorage>;
