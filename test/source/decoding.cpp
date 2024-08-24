@@ -37,7 +37,7 @@ TEST(Decoding, FromEncoding)
 
   {
     // 'Sign bit' is set -> Decoded value will be negative
-    constexpr auto l = multipleint::multiple_int<7, std::uint32_t>::encode<1>({64});
+    constexpr auto l = multipleint::multiple_int<7, std::uint32_t>::encode<1>(std::array{64});
 
     EXPECT_EQ(-64, l.extract<0>());
     EXPECT_EQ(-64, l.decode<1>()[0]);
