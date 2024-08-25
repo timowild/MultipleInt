@@ -7,12 +7,13 @@
 #include "../include/bench_targets.hpp"
 #include "../include/util.hpp"
 
-template<typename SmallerInteger, typename BiggerInteger, typename ComparingInteger, unsigned int BitWidth>
+template<typename SmallerInteger, typename BiggerInteger, typename ComparingInteger, std::size_t BitWidth>
 static void sum_prom_int_bench(benchmark::State& state)
 {
+  constexpr std::size_t IntCount = multipleint::multiple_int<BitWidth, ComparingInteger>::IntCount;
+
   const auto n_elements = state.range(0);
-  const Container<SmallerInteger> vals(n_elements * ((8 * sizeof(ComparingInteger)) / (BitWidth + 1)),
-                                       SmallerInteger(1));
+  const Container<SmallerInteger> vals(n_elements * IntCount, SmallerInteger(1));
 
   const auto init = BiggerInteger {};
   for (auto _ : state) {

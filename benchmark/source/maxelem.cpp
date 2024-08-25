@@ -6,15 +6,17 @@
 #include "../include/bench_targets.hpp"
 #include "../include/util.hpp"
 
-template<typename Integer, typename ComparingInteger, unsigned int BitWidth>
+template<typename Integer, typename ComparingInteger, std::size_t BitWidth>
 static void elemwise_max_int_bench(benchmark::State& state)
 {
+  constexpr std::size_t IntCount = multipleint::multiple_int<BitWidth, ComparingInteger>::IntCount;
+
   const auto n_elements = state.range(0);
-  const Container<Integer> x(n_elements * ((8 * sizeof(ComparingInteger)) / (BitWidth + 1)), Integer {1});
+  const Container<Integer> x(n_elements * IntCount, Integer {1});
 
   // e.g. creating std::uint8_t, but multiple_int pendant calculates in std::uint32_t -> 4
   // more elements for same "size"
-  Container<Integer> y(n_elements * ((8 * sizeof(ComparingInteger)) / (BitWidth + 1)), Integer {2});
+  Container<Integer> y(n_elements * IntCount, Integer {2});
 
   for (auto _ : state) {
     bench::elemwise_max(exec_policy, x.cbegin(), x.cend(), y.cbegin(), y.begin());

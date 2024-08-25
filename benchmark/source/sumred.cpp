@@ -6,11 +6,13 @@
 #include "../include/bench_targets.hpp"
 #include "../include/util.hpp"
 
-template<typename Integer, typename ComparingInteger, unsigned int BitWidth>
+template<typename Integer, typename ComparingInteger, std::size_t BitWidth>
 static void sum_red_int_bench(benchmark::State& state)
 {
+  constexpr std::size_t IntCount = multipleint::multiple_int<BitWidth, ComparingInteger>::IntCount;
+
   const auto n_elements = state.range(0);
-  const Container<Integer> vals(n_elements * ((8 * sizeof(ComparingInteger)) / (BitWidth + 1)), Integer {1});
+  const Container<Integer> vals(n_elements * IntCount, Integer {1});
 
   const auto init = Integer {};
 
