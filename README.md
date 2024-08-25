@@ -1,6 +1,6 @@
 # MultipleInt
 
-The performance of parallel algorithms is in most cases memory bound which means that the CPU/GPU cores spend more time waiting for the memory rather than computing. To overcome such bandwidth limitations and also to reduce the amount of "wasted" memory (most applications do not utilise the entire value range of a datatype), one option is to store multiple small integers in a large integer datatype via bit-shifting operations.
+The performance of parallel algorithms is in most cases memory bound which means that the CPU/GPU cores spend more time waiting for the memory rather than computing. In order to overcome such bandwidth limitations and also to reduce the amount of "wasted" memory (most applications do not utilise the entire value range of a datatype), one option is to store multiple small integers in a large integer datatype via bit-shifting operations.
 
 MultipleInt is a C++20 header-only library which takes over these bit-shifiting operations so that multiple integers can be encoding from and decoding into a single integer. In addition, several operations can be applied on these packed integers (called `multiple_int`s) which consist in:
 
