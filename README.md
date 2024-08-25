@@ -2,7 +2,7 @@
 
 The performance of parallel algorithms is in most cases memory bound which means that the CPU/GPU cores spend more time waiting for the memory rather than computing. In order to overcome such bandwidth limitations and also to reduce the amount of "wasted" memory (most applications do not utilise the entire value range of a datatype), one option is to store multiple small integers in a large integer datatype via bit-shifting operations.
 
-MultipleInt is a C++20 header-only library which takes over these bit-shifiting operations so that multiple integers can be encoding from and decoding into a single integer. In addition, several operations can be applied on these packed integers (called `multiple_int`s) which consist in:
+MultipleInt is a C++20 header-only library which takes over these bit-shifiting operations so that multiple integers can be encoding from and decoding into a single integer variable. In addition, several operations can be applied on these packed integers (called `multiple_int`s) which consist in:
 
 1. Taking the negative value of every stored integer
 2. Taking the sum of all stored integers
@@ -14,7 +14,7 @@ MultipleInt is a C++20 header-only library which takes over these bit-shifiting 
 
 ## Example
 
-MultipleInt provides a single class named `multiple_int` in the namespace `multipleint`, where this class expects a `BitWidth` (how many bits should be used for each integer) and a `BackingStorage` (= unsigned integer-datatype of the internal integer-container) as template arguments. In order to detect possible overflows occuring in element-wise operations (additions and subtractions), every stored integer has an additional carry/overflow-bit, which is why a total of `(8 * sizeof(BackingStorage)) / (BitWidth + 1)` integers can be stored in one `multipleint::multiple_int<BitWidth, BackingStorage>`-object. These overflow-bits can be obtained using the `carry()`-methode.
+MultipleInt provides a single class named `multiple_int` in the namespace `multipleint`, where this class expects a `BitWidth` (how many bits should be used for each integer) and a `BackingStorage` (= unsigned integer-datatype of the internal integer variable) as template arguments. In order to detect possible overflows occuring in element-wise operations (additions and subtractions), every stored integer has an additional carry/overflow-bit, which is why a total of `(8 * sizeof(BackingStorage)) / (BitWidth + 1)` integers can be stored in one `multipleint::multiple_int<BitWidth, BackingStorage>`-object. These overflow-bits can be obtained using the `carry()` member function.
 
 Encoding and decoding of integers can be done in two ways:
 
