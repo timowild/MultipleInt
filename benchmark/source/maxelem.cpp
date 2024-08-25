@@ -20,6 +20,8 @@ static void elemwise_max_int_bench(benchmark::State& state)
 
   for (auto _ : state) {
     bench::elemwise_max(exec_policy, x.cbegin(), x.cend(), y.cbegin(), y.begin());
+
+    benchmark::DoNotOptimize(y);
   }
 }
 
@@ -35,6 +37,8 @@ static void elemwise_max_multi_int_bench(benchmark::State& state)
 
   for (auto _ : state) {
     bench::elemwise_max(exec_policy, x.cbegin(), x.cend(), y.cbegin(), y.begin());
+
+    benchmark::DoNotOptimize(y);
   }
 }
 

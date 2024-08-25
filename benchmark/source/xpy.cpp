@@ -20,6 +20,8 @@ static void xpy_int_bench(benchmark::State& state)
 
   for (auto _ : state) {
     bench::xpy(exec_policy, x.cbegin(), x.cend(), y.cbegin(), y.begin());
+
+    benchmark::DoNotOptimize(y);
   }
 }
 
@@ -35,6 +37,8 @@ static void xpy_multi_int_bench(benchmark::State& state)
 
   for (auto _ : state) {
     bench::xpy(exec_policy, x.cbegin(), x.cend(), y.cbegin(), y.begin());
+
+    benchmark::DoNotOptimize(y);
   }
 }
 
