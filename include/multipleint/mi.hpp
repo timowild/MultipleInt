@@ -176,7 +176,7 @@ public:
       /* clang-format off */
       [&data, this]<std::size_t... Idx>(std::index_sequence<Idx...>) constexpr
       { 
-        ((std::get<Idx>(data) = extract<Idx, int>()), ...); 
+        ((std::get<Idx>(data) = this->extract<Idx, int>()), ...); 
       }(std::make_index_sequence<AtMostIntCount> {});
       /* clang-format on */
     }
@@ -193,7 +193,7 @@ public:
     {
       value_type result {};
 
-      ((result += extract<Idx, value_type>()), ...);
+      ((result += this->extract<Idx, value_type>()), ...);
 
       return result;
     }(std::make_index_sequence<IntCount> {});
@@ -240,7 +240,7 @@ public:
       /* clang-format off */
       [&result, this]<std::size_t... Idx>(std::index_sequence<Idx...>) constexpr
       {
-        result = std::max({result, extract<Idx, value_type>()...});
+        result = std::max({result, this->extract<Idx, value_type>()...});
       }(detail::index_sequence_from_to<1, IntCount> {});
       /* clang-format on */
     }

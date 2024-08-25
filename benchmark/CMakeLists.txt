@@ -25,6 +25,7 @@ set(BENCH_FILES
 foreach(BENCH_FILE ${BENCH_FILES})
     get_filename_component(BENCH_NAME ${BENCH_FILE} NAME_WLE)
     add_executable(multipleint_${BENCH_NAME} ${BENCH_FILE})
+    enable_warnings(multipleint_${BENCH_NAME})
 
     target_link_libraries(multipleint_${BENCH_NAME} PRIVATE benchmark::benchmark)
     target_include_directories(multipleint_${BENCH_NAME} ${warning_guard} PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>)

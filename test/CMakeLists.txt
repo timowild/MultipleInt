@@ -15,6 +15,7 @@ FetchContent_MakeAvailable(googletest)
 # ---- Tests ----
 
 add_executable(multipleint_test source/multipleint_test.cpp)
+enable_warnings(multipleint_test)
 add_subdirectory(source)
 target_link_libraries(multipleint_test PRIVATE gtest_main)
 target_compile_features(multipleint_test PRIVATE cxx_std_20)
