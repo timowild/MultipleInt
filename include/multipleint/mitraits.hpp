@@ -45,7 +45,7 @@ struct _int_mask<0, BitWidth, BackingStorage>
 template<std::size_t IntCount, std::size_t BitWidth, typename BackingStorage>
 constexpr BackingStorage _int_mask_v = _int_mask<IntCount, BitWidth, BackingStorage>::value;
 
-// Set upper sizeof(BackingStorage) - (IntCount * BitWidth) bits,
+// Set upper sizeof(BackingStorage) * 8 - (IntCount * (BitWidth + 1)) bits,
 // remainder is only 0s
 template<std::size_t IntCount, std::size_t BitWidth, typename BackingStorage>
 struct _empty_mask
@@ -66,6 +66,7 @@ struct _empty_mask
 template<std::size_t IntCount, std::size_t BitWidth, typename BackingStorage>
 constexpr BackingStorage _empty_mask_v = _empty_mask<IntCount, BitWidth, BackingStorage>::value;
 
+// Set all remaining bits after truncation to 1s
 template<std::size_t IntCount, std::size_t OldBitWidth, std::size_t NewBitWidth, typename BackingStorage>
 struct truncation_mask
 {
@@ -184,7 +185,7 @@ struct _multiple_int_traits
   // Masks all the bits reserved for the actual values
   static constexpr BackingStorage int_mask = _int_mask_v<IntCount, BitWidth, BackingStorage>;
 
-  // Mask only the singular padding carry bits
+  // Masks only the singular padding carry/overflow bits
   static constexpr BackingStorage carry_mask = _carry_mask_v<IntCount, BitWidth, BackingStorage>;
 
   static constexpr BackingStorage empty_mask = _empty_mask_v<IntCount, BitWidth, BackingStorage>;
@@ -193,8 +194,6 @@ struct _multiple_int_traits
 
   template<typename T>
   using next_widest = typename _next_widest<T>::type;
-
-  // Masks upper N - BitWidth bits of value
 };
 
 template<class IndexSequence, std::size_t Add>
