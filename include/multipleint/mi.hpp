@@ -4,6 +4,7 @@
 #include <type_traits>
 
 #include "mitraits.hpp"
+#include "miutility.hpp"
 
 #ifndef CHAR_BIT
 #  define CHAR_BIT 8
@@ -294,6 +295,17 @@ public:
   constexpr BackingStorage intv() const { return this->value_ & traits::int_mask; }
 
   constexpr BackingStorage carry() const { return this->value_ & traits::carry_mask; }
+
+  constexpr auto operator+(int summand) const -> multiple_int<BitWidth, BackingStorage>
+  {
+    return *this + multiple_int<BitWidth, BackingStorage>::encode(detail::array_repeat<IntCount>(summand));
+  }
+
+  friend constexpr auto operator+(int summand, multiple_int<BitWidth, BackingStorage> mi)
+      -> multiple_int<BitWidth, BackingStorage>
+  {
+    return mi + summand;
+  }
 
   constexpr auto operator+(multiple_int<BitWidth, BackingStorage> rhs) const -> multiple_int<BitWidth, BackingStorage>
   {

@@ -327,6 +327,44 @@ TEST(Addition, PartiallyOverflowing4Ints7Bit)
   EXPECT_EQ(0x00'00'80'80, s.carry());
 }
 
+TEST(Addition, WithSingleSummandZero)
+{
+  {
+    constexpr auto l = multipleint::multiple_int<3, std::uint8_t>::encode<2>({0, 1});
+    auto s = l + 0;
+
+    EXPECT_EQ(0b0001'0000, s.intv());
+    EXPECT_EQ(0, s.carry());
+  }
+
+  {
+    constexpr auto l = multipleint::multiple_int<3, std::uint16_t>::encode<4>({1, -1, 2, -2});
+    auto s = l + 0;
+
+    EXPECT_EQ(0b0110'0010'0111'0001, s.intv());
+    EXPECT_EQ(0, s.carry());
+  }
+}
+
+TEST(Addition, WithSingleSummandTwo)
+{
+  {
+    constexpr auto l = multipleint::multiple_int<3, std::uint8_t>::encode<2>({-2, 2});
+    auto s = l + 2;
+
+    EXPECT_EQ(0b0100'0000, s.intv());
+    EXPECT_EQ(0b1000'0000, s.carry());
+  }
+
+  {
+    constexpr auto l = multipleint::multiple_int<3, std::uint16_t>::encode<4>({-1, 0, 1, 3});
+    auto s = l + 2;
+
+    EXPECT_EQ(0b0101'0011'0010'0001, s.intv());
+    EXPECT_EQ(0b1000'0000'0000'0000, s.carry());
+  }
+}
+
 TEST(Max, TwoTwoBitInt8Bit)
 {
   using target_type = multipleint::multiple_int<2, std::uint8_t>;

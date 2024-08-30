@@ -195,21 +195,4 @@ struct _multiple_int_traits
   template<typename T>
   using next_widest = typename _next_widest<T>::type;
 };
-
-template<class IndexSequence, std::size_t Add>
-struct increase_index_sequence;
-
-template<std::size_t... I, std::size_t Add>
-struct increase_index_sequence<std::index_sequence<I...>, Add>
-{
-  using type = std::index_sequence<(I + Add)...>;
-};
-
-/* clang-format off */
-/// index sequence of type size_t of the range [Start, End)
-template<std::size_t Start, std::size_t End>
-requires(Start <= End)
-using index_sequence_from_to = typename increase_index_sequence<std::make_index_sequence<End - Start>, Start>::type;
-/* clang-format on */
-
 }  // namespace multipleint::detail

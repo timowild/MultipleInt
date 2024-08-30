@@ -22,7 +22,7 @@ static void max_red_int_bench(benchmark::State& state)
 template<class T>
 static void max_red_multi_int_bench(benchmark::State& state)
 {
-  auto xs = array_repeat<T::IntCount, int>(1);
+  auto xs = multipleint::detail::array_repeat<T::IntCount, int>(1);
 
   const auto n_elements = state.range(0);
   const Container<T> vals(n_elements, T::template encode<T::IntCount>(xs));

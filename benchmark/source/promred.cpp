@@ -24,8 +24,8 @@ static void sum_prom_int_bench(benchmark::State& state)
 template<typename SmallerInteger, typename BiggerInteger>
 static void sum_prom_multi_int_bench(benchmark::State& state)
 {
-  auto xs = array_repeat<SmallerInteger::IntCount, int>(1);
-  auto is = array_repeat<BiggerInteger::IntCount, int>(0);
+  auto xs = multipleint::detail::array_repeat<SmallerInteger::IntCount, int>(1);
+  auto is = multipleint::detail::array_repeat<BiggerInteger::IntCount, int>(0);
 
   const auto n_elements = state.range(0);
   const Container<SmallerInteger> vals(n_elements, SmallerInteger::template encode<SmallerInteger::IntCount>(xs));

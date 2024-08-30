@@ -24,8 +24,8 @@ static void sum_red_int_bench(benchmark::State& state)
 template<class T>
 static void sum_red_multi_int_bench(benchmark::State& state)
 {
-  auto xs = array_repeat<T::IntCount, int>(1);
-  auto is = array_repeat<T::IntCount, int>(0);
+  auto xs = multipleint::detail::array_repeat<T::IntCount, int>(1);
+  auto is = multipleint::detail::array_repeat<T::IntCount, int>(0);
 
   const auto n_elements = state.range(0);
   const Container<T> vals(n_elements, T::template encode<T::IntCount>(xs));

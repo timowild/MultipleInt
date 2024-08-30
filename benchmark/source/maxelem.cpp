@@ -28,8 +28,8 @@ static void elemwise_max_int_bench(benchmark::State& state)
 template<class T>
 static void elemwise_max_multi_int_bench(benchmark::State& state)
 {
-  auto xs = array_repeat<T::IntCount, int>(1);
-  auto ys = array_repeat<T::IntCount, int>(2);
+  auto xs = multipleint::detail::array_repeat<T::IntCount, int>(1);
+  auto ys = multipleint::detail::array_repeat<T::IntCount, int>(2);
 
   const auto n_elements = state.range(0);
   const Container<T> x(n_elements, T::template encode<T::IntCount>(xs));
