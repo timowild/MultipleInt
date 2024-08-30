@@ -1,5 +1,3 @@
-#include <bitset>
-
 #include <gtest/gtest.h>
 #include <multipleint/mi.hpp>
 #include <multipleint/milimits.hpp>
@@ -7,6 +5,7 @@
 TEST(ErrorMax, NormalValuesWithErrors)
 {
   using target_type = multipleint::multiple_int<3, std::uint8_t>;
+  using std::max;
 
   constexpr auto num = target_type::encode<2>({0b010, 0b010});
 

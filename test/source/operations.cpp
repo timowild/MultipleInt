@@ -16,8 +16,7 @@ TEST(UnaryMinus, InvertPosToNeg)
 
   EXPECT_EQ(expected.intv(), res.intv()) << "Expected " << std::hex << expected.intv() << ", got " << res.intv()
                                          << "\n";
-  EXPECT_EQ(expected.carry(), res.carry())
-      << "Expected " << std::hex << expected.carry() << ", got " << res.carry() << "\n";
+  EXPECT_EQ(0, res.carry());
 }
 
 TEST(UnaryMinus, SanityCheck)
@@ -28,7 +27,7 @@ TEST(UnaryMinus, SanityCheck)
   constexpr auto res = -num;
 
   EXPECT_EQ(0b00000110, res.intv()) << "Expected " << std::hex << 0b00000110 << ", got " << res.intv() << "\n";
-  EXPECT_EQ(0b00000000, res.carry()) << "Expected " << std::hex << 0b10000000 << ", got " << res.intv() << "\n";
+  EXPECT_EQ(0, res.carry());
 }
 
 TEST(UnaryMinus, InvertNegToPos)
@@ -41,8 +40,7 @@ TEST(UnaryMinus, InvertNegToPos)
 
   EXPECT_EQ(expected.intv(), res.intv()) << "Expected " << std::hex << expected.intv() << ", got " << res.intv()
                                          << "\n";
-  EXPECT_EQ(expected.carry(), res.carry())
-      << "Expected " << std::hex << expected.carry() << ", got " << res.carry() << "\n";
+  EXPECT_EQ(0, res.carry());
 }
 
 TEST(UnaryMinus, Zero)
@@ -54,7 +52,7 @@ TEST(UnaryMinus, Zero)
   constexpr auto expected = target_type::encode<2>({0, 0});
 
   EXPECT_EQ(expected.intv(), res.intv());
-  EXPECT_EQ(expected.carry(), res.carry());
+  EXPECT_EQ(0, res.carry());
 }
 
 TEST(UnaryMinus, NonsymmetricalTwosComp)
@@ -95,9 +93,7 @@ TEST(UnaryMinus, Examples)
 
   EXPECT_EQ(expected.intv(), res.intv()) << "Expected " << std::hex << expected.intv() << ", got " << res.intv()
                                          << "\n";
-
-  EXPECT_EQ(expected.carry(), res.carry())
-      << "Expected " << std::hex << expected.carry() << ", got " << res.carry() << "\n";
+  EXPECT_EQ(0, res.carry());
 }
 
 TEST(BinaryMinus, PosMinusPos)
@@ -111,9 +107,7 @@ TEST(BinaryMinus, PosMinusPos)
 
   EXPECT_EQ(expected.intv(), res.intv()) << "Expected " << std::hex << expected.intv() << ", got " << res.intv()
                                          << "\n";
-
-  EXPECT_EQ(expected.carry(), res.carry())
-      << "Expected " << std::hex << expected.carry() << ", got " << res.carry() << "\n";
+  EXPECT_EQ(0, res.carry());
 }
 
 TEST(BinaryMinus, MinusMinusMinus)
@@ -127,8 +121,7 @@ TEST(BinaryMinus, MinusMinusMinus)
 
   EXPECT_EQ(expected.intv(), res.intv()) << "Expected " << std::hex << expected.intv() << ", got " << res.intv()
                                          << "\n";
-  EXPECT_EQ(expected.carry(), res.carry())
-      << "Expected " << std::hex << expected.carry() << ", got " << res.carry() << "\n";
+  EXPECT_EQ(0, res.carry());
 }
 
 TEST(Subtraction, NoOverflow)
@@ -140,11 +133,9 @@ TEST(Subtraction, NoOverflow)
     constexpr auto l = target_type::encode<2>({2, 1});
     constexpr auto r = target_type::encode<2>({1, -1});
     constexpr auto out = l - r;
-    constexpr auto expected_int = 0b0'010'0'001;
-    constexpr auto expected_carry = 0b0;
 
-    EXPECT_EQ(expected_int, out.intv());
-    EXPECT_EQ(expected_carry, out.carry());
+    EXPECT_EQ(0b0'010'0'001, out.intv());
+    EXPECT_EQ(0, out.carry());
   }
 
   // no carries in LHS or RHS, min error bit
@@ -152,11 +143,9 @@ TEST(Subtraction, NoOverflow)
     constexpr auto l = target_type::encode<2>({-3, -3});
     constexpr auto r = target_type::encode<2>({-4, -4});
     constexpr auto out = l - r;
-    constexpr auto expected_int = 0b0'001'0'001;
-    constexpr auto expected_carry = 0b0;
 
-    EXPECT_EQ(expected_int, out.intv());
-    EXPECT_EQ(expected_carry, out.carry());
+    EXPECT_EQ(0b0'001'0'001, out.intv());
+    EXPECT_EQ(0, out.carry());
   }
 
   // no carries in LHS, carry in RHS, no min error bit
@@ -168,11 +157,9 @@ TEST(Subtraction, NoOverflow)
     EXPECT_EQ(0b1000'0000, r.carry());
 
     constexpr auto out = l - r;
-    constexpr auto expected_int = 0b0'111'0'011;
-    constexpr auto expected_carry = 0b1000'1000;
 
-    EXPECT_EQ(expected_int, out.intv());
-    EXPECT_EQ(expected_carry, out.carry());
+    EXPECT_EQ(0b0'111'0'011, out.intv());
+    EXPECT_EQ(0b1000'1000, out.carry());
   }
 
   // no carries in LHS, set carries in RHS, min error bits
@@ -185,11 +172,8 @@ TEST(Subtraction, NoOverflow)
 
     constexpr auto out = l - r;
 
-    constexpr auto expected_int = 0b0'110'0'000;
-    constexpr auto expected_carry = 0b1000'0000;
-
-    EXPECT_EQ(expected_int, out.intv());
-    EXPECT_EQ(expected_carry, out.carry());
+    EXPECT_EQ(0b0'110'0'000, out.intv());
+    EXPECT_EQ(0b1000'0000, out.carry());
   }
 
   // carry in LHS, none in RHS, no min error bit
@@ -201,11 +185,9 @@ TEST(Subtraction, NoOverflow)
 
     constexpr auto r = target_type::encode<2>({1, -1});
     constexpr auto out = l - r;
-    constexpr auto expected_int = 0b0'111'0'001;
-    constexpr auto expected_carry = 0b1000'0000;
 
-    EXPECT_EQ(expected_int, out.intv());
-    EXPECT_EQ(expected_carry, out.carry());
+    EXPECT_EQ(0b0'111'0'001, out.intv());
+    EXPECT_EQ(0b1000'0000, out.carry());
   }
 
   // carry in LHS, none in RHS, min error bits
@@ -217,11 +199,9 @@ TEST(Subtraction, NoOverflow)
 
     constexpr auto r = target_type::encode<2>({-4, -4});
     constexpr auto out = l - r;
-    constexpr auto expected_int = 0b0'010'0'011;
-    constexpr auto expected_carry = 0b1000'0000;
 
-    EXPECT_EQ(expected_int, out.intv());
-    EXPECT_EQ(expected_carry, out.carry());
+    EXPECT_EQ(0b0'010'0'011, out.intv());
+    EXPECT_EQ(0b1000'0000, out.carry());
   }
 
   // carries in LHS & RHS, no min error bits
@@ -234,11 +214,9 @@ TEST(Subtraction, NoOverflow)
     constexpr auto l = v;
     constexpr auto r = v;
     constexpr auto out = l - r;
-    constexpr auto expected_int = 0b0'000'0'000;
-    constexpr auto expected_carry = 0b1000'0000;
 
-    EXPECT_EQ(expected_int, out.intv());
-    EXPECT_EQ(expected_carry, out.carry());
+    EXPECT_EQ(0b0'000'0'000, out.intv());
+    EXPECT_EQ(0b1000'0000, out.carry());
   }
 
   // carries in LHS & RHS, min error bits
@@ -251,11 +229,9 @@ TEST(Subtraction, NoOverflow)
     constexpr auto l = v;
     constexpr auto r = v;
     constexpr auto out = l - r;
-    constexpr auto expected_int = 0b0'000'0'000;
-    constexpr auto expected_carry = 0b1000'0000;
 
-    EXPECT_EQ(expected_int, out.intv());
-    EXPECT_EQ(expected_carry, out.carry());
+    EXPECT_EQ(0b0'000'0'000, out.intv());
+    EXPECT_EQ(0b1000'0000, out.carry());
   }
 }
 
@@ -299,11 +275,9 @@ TEST(Addition, OverflowingOneIntSevenBit)
   EXPECT_EQ(0x01, r.intv());
 
   constexpr auto s = l + r;
-  constexpr auto expectedi = 0x40;
-  constexpr auto expectedc = 0x80;
 
-  EXPECT_EQ(+expectedi, +s.intv()) << "Expected " << std::hex << +expectedi << ", got " << +s.intv() << "\n";
-  EXPECT_EQ(+expectedc, +s.carry()) << "Expected " << std::hex << +expectedc << ", got " << +s.carry() << "\n";
+  EXPECT_EQ(0x40, s.intv());
+  EXPECT_EQ(0x80, s.carry());
 }
 
 TEST(Addition, PartiallyOverflowing4Ints7Bit)
@@ -311,19 +285,15 @@ TEST(Addition, PartiallyOverflowing4Ints7Bit)
   // Max container for 32 bits, carry bits are off
 
   constexpr auto l = std::numeric_limits<multipleint::multiple_int<7, std::uint32_t>>::max();
-  constexpr auto expected_l = 0x3F'3F'3F'3F;
 
-  EXPECT_EQ(expected_l, l.intv()) << "Expected " << std::hex << expected_l << ", got " << l.intv() << "\n";
-
-  EXPECT_EQ(0x0, l.carry());
+  EXPECT_EQ(0x3F'3F'3F'3F, l.intv());
+  EXPECT_EQ(0, l.carry());
 
   // Will overflow on the lower two ints, but keep the upper two
   constexpr auto r = multipleint::multiple_int<7, std::uint32_t>::encode<4>({0x01, 0x01, 0x00, 0x00});
   constexpr auto s = l + r;
 
-  constexpr auto expected_s = 0x3F'3F'40'40;
-  EXPECT_EQ(expected_s, s.intv()) << "Expected " << std::hex << expected_s << ", got " << s.intv() << "\n";
-
+  EXPECT_EQ(0x3F'3F'40'40, s.intv());
   EXPECT_EQ(0x00'00'80'80, s.carry());
 }
 
@@ -377,10 +347,8 @@ TEST(Max, TwoTwoBitInt8Bit)
 
   constexpr auto expected = target_type::encode<2>({0b00, 0b00});
 
-  EXPECT_EQ(+expected.intv(), +m1.intv())
-      << "Expected " << std::hex << +expected.intv() << ", got " << +m1.intv() << "\n";
-  EXPECT_EQ(+expected.intv(), +m2.intv())
-      << "Expected " << std::hex << +expected.intv() << ", got " << +m2.intv() << "\n";
+  EXPECT_EQ(expected.intv(), m1.intv()) << "Expected " << std::hex << expected.intv() << ", got " << +m1.intv() << "\n";
+  EXPECT_EQ(expected.intv(), m2.intv()) << "Expected " << std::hex << expected.intv() << ", got " << +m2.intv() << "\n";
 }
 
 TEST(Max, TwoInt8Bit_1)
@@ -395,10 +363,8 @@ TEST(Max, TwoInt8Bit_1)
 
   constexpr auto expected = target_type::encode<2>({0b000, 0b010});
 
-  EXPECT_EQ(expected.intv(), m1.intv()) << "Expected " << std::hex << +expected.intv() << ", got " << +m1.intv()
-                                        << "\n";
-  EXPECT_EQ(expected.intv(), m2.intv()) << "Expected " << std::hex << +expected.intv() << ", got " << +m2.intv()
-                                        << "\n";
+  EXPECT_EQ(expected.intv(), m1.intv()) << "Expected " << std::hex << expected.intv() << ", got " << +m1.intv() << "\n";
+  EXPECT_EQ(expected.intv(), m2.intv()) << "Expected " << std::hex << expected.intv() << ", got " << +m2.intv() << "\n";
 }
 
 TEST(Max, TwoInt8Bit_2)
@@ -413,10 +379,8 @@ TEST(Max, TwoInt8Bit_2)
 
   constexpr auto expected = target_type::encode<2>({0b000, 0b001});
 
-  EXPECT_EQ(expected.intv(), m1.intv()) << "Expected " << std::hex << +expected.intv() << ", got " << +m1.intv()
-                                        << "\n";
-  EXPECT_EQ(expected.intv(), m2.intv()) << "Expected " << std::hex << +expected.intv() << ", got " << +m2.intv()
-                                        << "\n";
+  EXPECT_EQ(expected.intv(), m1.intv()) << "Expected " << std::hex << expected.intv() << ", got " << +m1.intv() << "\n";
+  EXPECT_EQ(expected.intv(), m2.intv()) << "Expected " << std::hex << expected.intv() << ", got " << +m2.intv() << "\n";
 }
 
 TEST(Max, FourInt16Bit)
@@ -430,6 +394,7 @@ TEST(Max, FourInt16Bit)
   constexpr auto m2 = max(r, l);
 
   constexpr auto expected = target_type::encode<4>({0b001, 0b111, 0b110, 0b101});
+
   EXPECT_EQ(expected.intv(), m1.intv());
   EXPECT_EQ(expected.intv(), m2.intv());
 }
@@ -447,11 +412,9 @@ TEST(Max, FiveTwoBitInt16Bit)
   constexpr auto expected = target_type::encode<5>({0b00, 0b00, 0b00, 0b00, 0b00});
 
   EXPECT_EQ(expected.intv(), m1.intv()) << "Expected " << std::hex << expected.intv() << ", got " << m1.intv() << "\n";
-  EXPECT_EQ(expected.carry(), m1.carry())
-      << "Expected " << std::hex << expected.carry() << ", got " << m1.carry() << "\n";
+  EXPECT_EQ(0, m1.carry());
   EXPECT_EQ(expected.intv(), m2.intv()) << "Expected " << std::hex << expected.intv() << ", got " << m2.intv() << "\n";
-  EXPECT_EQ(expected.carry(), m2.carry())
-      << "Expected " << std::hex << expected.carry() << ", got " << m2.carry() << "\n";
+  EXPECT_EQ(0, m2.carry());
 }
 
 TEST(Max, FourInt32Bit)
@@ -481,20 +444,20 @@ TEST(Max, FourInt32Bit)
   constexpr auto exp_sr = target_type::encode<4>({0x3F, 0x3F, 0x7F, 0x7F});
 
   EXPECT_EQ(exp_sr.intv(), max_sr1.intv());
-  EXPECT_EQ(0x00'00'00'00, max_sr1.carry());
+  EXPECT_EQ(0, max_sr1.carry());
 
   EXPECT_EQ(exp_sr.intv(), max_sr2.intv());
-  EXPECT_EQ(0x00'00'00'00, max_sr2.carry());
+  EXPECT_EQ(0, max_sr2.carry());
 
   constexpr auto max_sl1 = max(s, l);
   constexpr auto max_sl2 = max(l, s);
   constexpr auto exp_sl = target_type::encode<4>({0x3F, 0x3F, 0x70, 0x70});
 
   EXPECT_EQ(exp_sl.intv(), max_sl1.intv());
-  EXPECT_EQ(0x00'00'00'00, max_sl1.carry());
+  EXPECT_EQ(0, max_sl1.carry());
 
   EXPECT_EQ(exp_sl.intv(), max_sl2.intv());
-  EXPECT_EQ(0x00'00'00'00, max_sl2.carry());
+  EXPECT_EQ(0, max_sl2.carry());
 }
 
 TEST(Sum, FourInt8Bit)
@@ -502,10 +465,9 @@ TEST(Sum, FourInt8Bit)
   using target_type = multipleint::multiple_int<1, std::uint8_t>;
 
   constexpr auto in = target_type::encode<4>({1, 1, 1, 1});
-  constexpr auto expected = -4;
   constexpr auto out = in.sum();
 
-  EXPECT_EQ(+expected, +out);
+  EXPECT_EQ(-4, out);
 }
 
 TEST(Sum, EightInt16Bit)
@@ -513,10 +475,9 @@ TEST(Sum, EightInt16Bit)
   using target_type = multipleint::multiple_int<1, std::uint16_t>;
 
   constexpr auto in = target_type::encode<8>({1, 1, 1, 1, 1, 1, 1, 1});
-  constexpr auto expected = -8;
   constexpr auto out = in.sum();
 
-  EXPECT_EQ(+expected, +out);
+  EXPECT_EQ(-8, out);
 }
 
 TEST(Sum, EightInt32BitNonFull)
@@ -524,10 +485,9 @@ TEST(Sum, EightInt32BitNonFull)
   using target_type = multipleint::multiple_int<3, std::uint32_t>;
 
   constexpr auto in = target_type::encode<8>({1, 2, 1, 2, 1, 2, 1, 2});
-  constexpr auto expected = 12;
   constexpr auto out = in.sum();
 
-  EXPECT_EQ(+expected, +out);
+  EXPECT_EQ(12, out);
 }
 
 TEST(Max, MinInMax)
