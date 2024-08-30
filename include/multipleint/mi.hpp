@@ -96,12 +96,12 @@ public:
   constexpr auto extract() const -> T
   /* clang-format on */
   {
-    // Create a mask with #bit-width bits set to one
-    constexpr auto mask = (static_cast<BackingStorage>(1) << BitWidth) - 1;
-
     // Extract one number from the internal storage
     const auto val = [this]() constexpr
     {
+      // Create a mask with #bit-width bits set to one
+      constexpr auto mask = (static_cast<BackingStorage>(1) << BitWidth) - 1;
+
       if constexpr (ExtractNumberAtIndex == 0)
         return (value_ & mask);
       else
