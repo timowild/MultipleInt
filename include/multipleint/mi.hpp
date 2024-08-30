@@ -165,9 +165,9 @@ public:
   {
     /* clang-format off */
     return [this]<std::size_t... Idx>(std::index_sequence<Idx...>) constexpr 
-      { 
+    {
       return std::array<int, AtMostIntCount> {this->extract<Idx, int>()...};
-      }(std::make_index_sequence<AtMostIntCount> {});
+    }(std::make_index_sequence<AtMostIntCount> {});
     /* clang-format on */
   }
 
