@@ -61,7 +61,7 @@ template<class Exec, class InputIterator, typename T>
 constexpr auto max_red_alt(Exec&& exec, InputIterator vals_b, InputIterator vals_e, T init)
 {
   using std::max;
-  
+
   return std::transform_reduce(
       std::forward<Exec>(exec),
       vals_b,

@@ -5,7 +5,6 @@
 #include <multipleint/mi.hpp>
 
 #include "../../benchmark/include/bench_targets.hpp"
-#include "../../benchmark/include/util.hpp"  // array_repeat
 
 TEST(Sum_red_alt, TwoIntEightFullPositiveValues)
 {
@@ -33,8 +32,8 @@ TEST(SumRed, Promotion)
   using SmallerInteger = multipleint::multiple_int<15, std::uint32_t>;
   using BiggerInteger = multipleint::multiple_int<31, std::uint64_t>;
 
-  constexpr auto xs = array_repeat<SmallerInteger::IntCount, int>(2);
-  constexpr auto is = array_repeat<BiggerInteger::IntCount, int>(0);
+  constexpr auto xs = multipleint::detail::array_repeat<SmallerInteger::IntCount, int>(2);
+  constexpr auto is = multipleint::detail::array_repeat<BiggerInteger::IntCount, int>(0);
 
   // 10000 times
   const std::vector<SmallerInteger> vals(10000, SmallerInteger::encode<SmallerInteger::IntCount>(xs));
