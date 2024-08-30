@@ -115,17 +115,20 @@ public:
   }
 
   /* clang-format off */
-  template<std::size_t EncodeNumberAtIndex> 
+  template<std::size_t EncodeNumberAtIndex, bool ClearField = true> 
   requires(EncodeNumberAtIndex < IntCount)
   constexpr auto encode(int input) -> void
   /* clang-format on */
   {
     constexpr auto mask = (static_cast<BackingStorage>(1) << BitWidth) - 1;
     constexpr auto shift = (BitWidth + 1) * EncodeNumberAtIndex;
-    constexpr auto delete_mask = ~(mask << shift);
 
-    // Clear value bits at EncodeNumberAtIndex
-    value_ &= delete_mask;
+    if constexpr (ClearField) {
+      constexpr auto delete_mask = ~(mask << shift);
+
+      // Clear value bits at EncodeNumberAtIndex
+      value_ &= delete_mask;
+    }
 
     // Insert value
     if constexpr (shift == 0) {
@@ -141,33 +144,17 @@ public:
   static constexpr auto encode(const std::array<int, AtMostIntCount>& input) -> multiple_int<BitWidth, BackingStorage>
   /* clang-format on */
   {
-    // Create a mask with #bit-width bits set to one
-    constexpr auto mask = (static_cast<BackingStorage>(1) << BitWidth) - 1;
+    return [&input]<std::size_t... Idx>(std::index_sequence<Idx...>) constexpr
+    {
+      // Encoding numbers are inserted in reverse order
+      // -> input[0] is stored in the "lower value" bits
 
-    BackingStorage value_ {};
+      multiple_int<BitWidth, BackingStorage> result {};
 
-    if constexpr (AtMostIntCount > 1) {
-      [&input, &value_]<std::size_t... Idx>(std::index_sequence<Idx...>) constexpr
-      {
-        const auto f = [&input, &value_]<std::size_t I>() constexpr
-        {
-          // Encoding numbers are inserted in reverse order
-          // -> input[0] is stored in the "lower value" bits
+      (result.encode<Idx, false>(std::get<Idx>(input)), ...);
 
-          // Insert value
-          value_ |= (std::get<AtMostIntCount - 1 - I>(input) & mask);
-          // Shift by bit width + 1 (carry bit)
-          value_ <<= (BitWidth + 1);
-        };
-
-        (f.template operator()<Idx>(), ...);
-      }(std::make_index_sequence<AtMostIntCount - 1> {});
-    }
-
-    // Don't shift the last value (i.e. first value in array)
-    value_ |= (std::get<0>(input) & mask);
-
-    return multiple_int<BitWidth, BackingStorage> {value_};
+      return result;
+    }(std::make_index_sequence<AtMostIntCount> {});
   }
 
   /* clang-format off */
@@ -176,12 +163,12 @@ public:
   constexpr auto decode() const -> std::array<int, AtMostIntCount>
   /* clang-format on */
   {
-      /* clang-format off */
+    /* clang-format off */
     return [this]<std::size_t... Idx>(std::index_sequence<Idx...>) constexpr 
       { 
       return std::array<int, AtMostIntCount> {this->extract<Idx, int>()...};
       }(std::make_index_sequence<AtMostIntCount> {});
-      /* clang-format on */
+    /* clang-format on */
   }
 
   constexpr auto sum() const -> std::make_signed_t<BackingStorage>
