@@ -1,19 +1,19 @@
 #pragma once
 
-#include <algorithm>  // std::max
 #include <array>
 #include <type_traits>
 
 #include "mitraits.hpp"
 
+#ifndef CHAR_BIT
+#  define CHAR_BIT 8
+#endif
+
 namespace multipleint
 {
 
-/* clang-format off */
-template<std::size_t BitWidth, typename BackingStorage>
-requires std::is_unsigned_v<BackingStorage>
+template<std::size_t BitWidth, std::unsigned_integral BackingStorage>
 class multiple_int
-/* clang-format on */
 {
 public:
   // Every Int has an additional carry/overflow bit
@@ -79,6 +79,11 @@ public:
     // Reset all carry (overflow)-bits
     value_ &= traits::int_mask;
   }
+
+  constexpr multiple_int(const multiple_int<BitWidth, BackingStorage>&) = default;
+  constexpr multiple_int& operator=(const multiple_int<BitWidth, BackingStorage>&) = default;
+  constexpr multiple_int(multiple_int<BitWidth, BackingStorage>&&) = default;
+  constexpr multiple_int& operator=(multiple_int<BitWidth, BackingStorage>&&) = default;
 
 private:
   BackingStorage value_;
@@ -170,18 +175,12 @@ public:
   constexpr auto decode() const -> std::array<int, AtMostIntCount>
   /* clang-format on */
   {
-    std::array<int, AtMostIntCount> data {};
-
-    if constexpr (AtMostIntCount >= 1) {
       /* clang-format off */
-      [&data, this]<std::size_t... Idx>(std::index_sequence<Idx...>) constexpr
+    return [this]<std::size_t... Idx>(std::index_sequence<Idx...>) constexpr 
       { 
-        ((std::get<Idx>(data) = this->extract<Idx, int>()), ...); 
+      return std::array<int, AtMostIntCount> {this->extract<Idx, int>()...};
       }(std::make_index_sequence<AtMostIntCount> {});
       /* clang-format on */
-    }
-
-    return data;
   }
 
   constexpr auto sum() const -> std::make_signed_t<BackingStorage>
@@ -191,11 +190,7 @@ public:
     /* clang-format off */
     return [this]<std::size_t... Idx>(std::index_sequence<Idx...>) constexpr
     {
-      value_type result {};
-
-      ((result += this->extract<Idx, value_type>()), ...);
-
-      return result;
+      return value_type ((this->extract<Idx, value_type>() + ...));
     }(std::make_index_sequence<IntCount> {});
     /* clang-format on */
   }
@@ -240,7 +235,19 @@ public:
       /* clang-format off */
       [&result, this]<std::size_t... Idx>(std::index_sequence<Idx...>) constexpr
       {
-        result = std::max({result, this->extract<Idx, value_type>()...});
+        // result = std::max({result, this->extract<Idx, value_type>()...});
+
+        const auto f = [&result, this]<std::size_t I>()
+        {
+            // https://graphics.stanford.edu/~seander/bithacks.html 
+            // Compute the maximum of two integers without branching
+            const auto diff = result - this->extract<I, value_type>();
+
+            result = result - (diff & (diff >> (sizeof(value_type) * CHAR_BIT - 1)));
+        };
+
+        (f.template operator()<Idx>(), ...);
+
       }(detail::index_sequence_from_to<1, IntCount> {});
       /* clang-format on */
     }
